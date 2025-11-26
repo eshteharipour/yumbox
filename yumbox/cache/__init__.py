@@ -625,7 +625,57 @@ def retry(
     return_exception=True,
     retry_on400=False,
 ):
-    """Args max_tries and wait defined as class attributes have higher precedence."""
+    """Decorator that retries a function on exceptions with configurable backoff strategy.
+
+    This decorator will retry a function when exceptions occur, with support for both
+    fixed wait times and exponential backoff. Parameters can be specified either in
+    the decorator or as class attributes on `self` (if decorating a method), with
+    class attributes taking precedence.
+
+    Args:
+        max_tries (int, optional): Maximum number of retry attempts. Defaults to 0 (no retries).
+            Class attribute takes precedence if present.
+        wait (float, optional): Fixed wait time in seconds between retries. Defaults to 0.
+            Ignored if backoff_factor is set. Class attribute takes precedence if present.
+        backoff_factor (float, optional): Base factor for exponential backoff calculation.
+            Delay = backoff_factor * (2 ** retry_count). When set, overrides fixed wait.
+            Class attribute takes precedence if present.
+        max_wait (float, optional): Maximum wait time in seconds for exponential backoff.
+            Defaults to 60. Class attribute takes precedence if present.
+        validator (Callable, optional): Function called with (*args, **kwargs, response=response)
+            to validate the response. Raises ValidationError if validation fails.
+        return_exception (bool, optional): If True, returns a dict with error details instead
+            of raising exceptions. Defaults to True.
+        retry_on400 (bool, optional): If True, retries on Error400 exceptions. Defaults to False.
+
+    Returns:
+        Callable: Decorated function that implements retry logic.
+
+    Raises:
+        ValidationError: When validator fails and retries are exhausted (if return_exception=False).
+        Error400: When a 400 error occurs and retry_on400=False (if return_exception=False).
+        Exception: When other exceptions occur and retries are exhausted (if return_exception=False).
+
+    Notes:
+        - On retry exhaustion with return_exception=True, returns:
+          {"status": "error", "error": {"message": "<error_message>"}}
+        - Error400 exceptions do not trigger retries unless retry_on400=True.
+        - ValidationError and other exceptions trigger retries with logging.
+        - Exponential backoff is capped at max_wait seconds.
+
+    Example:
+        >>> @retry(max_tries=3, backoff_factor=1, max_wait=10)
+        ... def fetch_data(url):
+        ...     return requests.get(url).json()
+
+        >>> class APIClient:
+        ...     max_tries = 5
+        ...     wait = 2
+        ...
+        ...     @retry()  # Uses class attributes
+        ...     def call_api(self):
+        ...         return self.client.request()
+    """
 
     def decorator(func):
         @functools.wraps(func)
