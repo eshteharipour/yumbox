@@ -300,6 +300,31 @@ class VectorRedis:
 
         return cls(db_name=db_name, host=host, port=port, db=db, password=password)
 
+    @classmethod
+    def from_connection(cls, db_name: str, client: redis.Redis) -> "VectorRedis":
+        """
+        Instantiate VectorRedis with an already available Redis connection.
+
+        :param db_name: Prefix for keys in Redis.
+        :param client: An existing redis.Redis client instance.
+        :return: A new VectorRedis instance.
+        """
+        # Create a new instance of the class without calling __init__
+        instance = cls.__new__(cls)
+
+        # Set the necessary attributes
+        instance.db_name = db_name
+        instance.key_prefix = f"{db_name}:"
+        instance.client = client
+
+        # Ensure the provided client is connected and responsive
+        try:
+            instance.client.ping()
+        except (ConnectionError, TimeoutError) as e:
+            raise ConnectionError(f"Provided Redis client is not connected - {e}")
+
+        return instance
+
 
 def redis_cache(
     func: Callable[P, dict[str, np.ndarray]],
