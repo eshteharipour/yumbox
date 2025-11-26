@@ -604,8 +604,8 @@ def kv_cache(func):
 
 
 def coalesce(*args):
-    # Return the first non-None value
-    return next((x for x in args if x is not None))
+    """Return the first non-None value"""
+    return next((arg for arg in args if arg is not None), None)
 
 
 class Error400(Exception):
@@ -618,7 +618,9 @@ class ValidationError(Exception):
 
 def retry(
     max_tries=None,
-    wait=None,
+    wait=None,  # fixed wait
+    backoff_factor=None,  # backoff_factor * (2 ** retry_count)
+    max_wait=None,
     validator: Callable | None = None,
     return_exception=True,
     retry_on400=False,
@@ -631,10 +633,15 @@ def retry(
             logger = BFG["logger"]
 
             self = args[0] if len(args) else None
-            tries = coalesce(max_tries, getattr(self, "max_tries", None), 0)
-            delay = coalesce(wait, getattr(self, "wait", None), 0)
+            m_tries = coalesce(max_tries, getattr(self, "max_tries", None), 0)
+            fixed_wait = coalesce(wait, getattr(self, "wait", None), 0)
+            b_factor = coalesce(
+                backoff_factor, getattr(self, "backoff_factor", None), None
+            )
+            m_wait = coalesce(max_wait, getattr(self, "max_wait", None), 60)
+
             response = {}
-            for retry in range(-1, tries):
+            for retry_count in range(-1, m_tries):
                 try:
                     response = func(*args, **kwargs)
                     if validator:
@@ -643,7 +650,7 @@ def retry(
                 except Error400 as e:
                     if return_exception:
                         response = {"status": "error", "error": {"message": str(e)}}
-                    logger.error(f"400 Exception occured. Error: {e}")
+                    logger.error(f"400 Exception occurred. Error: {e}")
                     logger.error(f"Args: {args}")
                     logger.error(f"KWArgs: {kwargs}")
                     if retry_on400 == False:
@@ -651,11 +658,18 @@ def retry(
                 except ValidationError as e:
                     if return_exception:
                         response = {"status": "error", "error": {"message": str(e)}}
-                    if retry + 1 < tries:
+                    if retry_count + 1 < m_tries:
                         import traceback
 
+                        # Calculate delay: use exponential backoff if configured, else fixed wait
+                        if b_factor is not None:
+                            delay = min(b_factor * (2**retry_count), m_wait)
+                        else:
+                            delay = fixed_wait
+
                         logger.warning(
-                            f"Validation error occured, retrying {retry+1}/{tries}. Error: {e}"
+                            f"Validation error occurred, retrying {retry_count+1}/{m_tries} "
+                            f"after {delay}s. Error: {e}"
                         )
                         logger.warning(traceback.format_exc())
                         logger.warning(f"Args: {args}")
@@ -664,11 +678,18 @@ def retry(
                 except Exception as e:
                     if return_exception:
                         response = {"status": "error", "error": {"message": str(e)}}
-                    if retry + 1 < tries:
+                    if retry_count + 1 < m_tries:
                         import traceback
 
+                        # Calculate delay: use exponential backoff if configured, else fixed wait
+                        if b_factor is not None:
+                            delay = min(b_factor * (2**retry_count), m_wait)
+                        else:
+                            delay = fixed_wait
+
                         logger.warning(
-                            f"Exception occured, retrying {retry+1}/{tries}. Error: {e}"
+                            f"Exception occurred, retrying {retry_count+1}/{m_tries} "
+                            f"after {delay}s. Error: {e}"
                         )
                         logger.warning(traceback.format_exc())
                         logger.warning(f"Args: {args}")
