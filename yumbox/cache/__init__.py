@@ -1,6 +1,7 @@
 import functools
 import hashlib
 import json
+import logging
 import os
 import time
 from collections.abc import Callable
@@ -21,6 +22,8 @@ from .kv import (
     lmdb_cache_kwargs_list_hash,
 )
 
+logger = logging.getLogger(__name__)
+
 # TODO: fix safe_save_kw keys= values=
 
 
@@ -28,7 +31,6 @@ def cache(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = os.path.join(cache_dir, f"{func_name}.pkl") if cache_dir else ""
@@ -58,7 +60,6 @@ def timed_cache(max_age_hours=1):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             cache_dir = BFG["cache_dir"]
-            logger = BFG["logger"]
 
             func_name = func.__name__
             cache_file = (
@@ -98,7 +99,6 @@ def timed_cache_kwargs(max_age_hours=1):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             cache_dir = BFG["cache_dir"]
-            logger = BFG["logger"]
 
             func_name = func.__name__
             func_kwargs = []
@@ -143,7 +143,6 @@ def cache_kwargs(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         func_kwargs = []
@@ -180,7 +179,6 @@ def async_cache(func):
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = os.path.join(cache_dir, f"{func_name}.pkl") if cache_dir else ""
@@ -211,7 +209,6 @@ def index(func):
         import faiss
 
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = os.path.join(cache_dir, f"{func_name}.bin") if cache_dir else ""
@@ -238,7 +235,6 @@ def np_cache(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = os.path.join(cache_dir, f"{func_name}.npz") if cache_dir else ""
@@ -267,7 +263,6 @@ def np_cache_lazy(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = os.path.join(cache_dir, f"{func_name}.npz") if cache_dir else ""
@@ -339,7 +334,6 @@ def np_cache_kwargs(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         func_kwargs = []
@@ -375,7 +369,6 @@ def cache_kwargs_hash(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         func_kwargs_hash = hashlib.md5(
@@ -407,7 +400,6 @@ def np_cache_kwargs_hash(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         func_kwargs_hash = hashlib.md5(
@@ -442,7 +434,6 @@ def np_cache_kwargs_list_hash(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
 
@@ -487,7 +478,6 @@ def np_cache_dict(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = os.path.join(cache_dir, f"{func_name}.npz") if cache_dir else ""
@@ -520,7 +510,6 @@ def unsafe_np_cache(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = os.path.join(cache_dir, f"{func_name}.npz") if cache_dir else ""
@@ -549,7 +538,6 @@ def safe_cache(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = (
@@ -578,7 +566,6 @@ def kv_cache(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = os.path.join(cache_dir, f"{func_name}.pkl") if cache_dir else ""
@@ -680,7 +667,6 @@ def retry(
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            logger = BFG["logger"]
 
             self = args[0] if len(args) else None
             m_tries = coalesce(max_tries, getattr(self, "max_tries", None), 0)
@@ -757,7 +743,6 @@ def last_offset(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_kwargs = []
         for k, v in sorted(kwargs.items()):
@@ -851,7 +836,6 @@ def last_str_offset(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_kwargs = []
         for k, v in sorted(kwargs.items()):

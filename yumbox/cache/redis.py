@@ -3,6 +3,7 @@ import gzip
 import hashlib
 import io
 import json
+import logging
 import os
 from collections.abc import Callable
 from typing import Any, ParamSpec, TypeVar
@@ -12,6 +13,8 @@ import redis
 from redis.exceptions import ConnectionError, TimeoutError
 
 from yumbox.config import BFG
+
+logger = logging.getLogger(__name__)
 
 P = ParamSpec("P")
 
@@ -338,7 +341,7 @@ def redis_cache(
     @functools.wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> dict[str, np.ndarray]:
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
+
         func_name = func.__name__
 
         cache: dict[str, np.ndarray] = {}
@@ -387,7 +390,7 @@ def redis_cache_kwargs_list_hash(
     @functools.wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> dict[str, np.ndarray]:
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
+
         func_name = func.__name__
 
         if "cache_kwargs" not in kwargs or not kwargs["cache_kwargs"]:

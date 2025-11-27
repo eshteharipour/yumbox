@@ -8,6 +8,8 @@ from contextlib import redirect_stdout
 from datetime import datetime
 from typing import Literal, Union, overload
 
+logger = logging.getLogger(__name__)
+
 
 class Print:
     @functools.wraps(logging.info)
@@ -317,8 +319,6 @@ def execution_wrapper(func):
         import traceback
         from time import time
 
-        logger = BFG["logger"]
-
         begin = time()
         try:
             return func(*args, **kwargs)
@@ -337,7 +337,6 @@ def main_run(main: Callable, *args, **kwargs):
     import traceback
     from time import time
 
-    logger = BFG["logger"]
     begin = time()
     try:
         main(*args, **kwargs)

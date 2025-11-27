@@ -1,6 +1,7 @@
 import functools
 import hashlib
 import json
+import logging
 import os
 import uuid
 
@@ -10,6 +11,8 @@ import numpy as np
 from lmdb import Environment
 
 from yumbox.config import BFG
+
+logger = logging.getLogger(__name__)
 
 
 class LMDBMultiIndex:
@@ -496,7 +499,6 @@ def lmdb_cache(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_db_path = os.path.join(cache_dir, func_name) if cache_dir else None
@@ -536,7 +538,6 @@ def lmdb_cache_kwargs_list_hash(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
 

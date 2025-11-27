@@ -1,3 +1,4 @@
+import logging
 import os
 from collections import defaultdict
 from pathlib import Path
@@ -6,7 +7,7 @@ from typing import Literal
 import mlflow
 from mlflow import MlflowClient
 
-from yumbox.cache import BFG
+logger = logging.getLogger(__name__)
 
 
 def get_all_checkpoints(checkpoints_dir: str) -> set[str]:
@@ -14,7 +15,7 @@ def get_all_checkpoints(checkpoints_dir: str) -> set[str]:
     Recursively find all checkpoint files in the given directory.
     Returns absolute paths of checkpoint files.
     """
-    logger = BFG["logger"]
+
     checkpoints = set()
 
     checkpoint_extensions = {".pt", ".pth", ".ckpt", ".bin", ".safetensors"}
@@ -53,7 +54,6 @@ def get_experiment_checkpoints(
         - reasons_dict: Dict mapping checkpoint path to reason for keeping
         - all_referenced_checkpoints: Set of all checkpoints referenced in MLflow
     """
-    logger = BFG["logger"]
 
     # Set MLflow tracking URI
     from yumbox.mlflow import set_tracking_uri
@@ -236,7 +236,6 @@ def analyze_checkpoint_status(
         - non_referenced_set: Checkpoints that exist on disk but are not referenced in MLflow
         - reasons_dict: Dict mapping checkpoint path to reason for keeping
     """
-    logger = BFG["logger"]
 
     # Get all checkpoints in directory
     all_checkpoints = get_all_checkpoints(checkpoints_dir)
@@ -378,7 +377,6 @@ def execute_checkpoint_removal(remove_set: set[str], dry_run: bool = True) -> No
         remove_set: Set of checkpoint paths to remove
         dry_run: If True, only print what would be removed without actually removing
     """
-    logger = BFG["logger"]
 
     if not remove_set:
         logger.info("No checkpoints to remove.")

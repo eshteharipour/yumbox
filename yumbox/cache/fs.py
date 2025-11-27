@@ -1,5 +1,6 @@
 import errno
 import functools
+import logging
 import mimetypes
 import os
 import pickle
@@ -14,6 +15,9 @@ from PIL import Image
 
 from yumbox.config import BFG
 from yumbox.nlp import replace_fromstart
+
+logger = logging.getLogger(__name__)
+
 
 __all__ = [
     "retry_on_lock",
@@ -39,8 +43,6 @@ def retry_on_lock(max_attempts: int = 5, delay: float = 3.0):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(file_path: str, *args, **kwargs):
-            logger = BFG["logger"]
-
             attempts = 0
             while attempts < max_attempts:
                 try:
@@ -158,7 +160,6 @@ def safe_move(src: str, dst: str):
 
 @retry_on_lock()
 def safe_load_lambda(file_path: str, load_func: Callable):
-    logger = BFG["logger"]
 
     if not os.path.exists(file_path):
         logger.error(f"File {file_path} does not exist")
@@ -173,7 +174,6 @@ def safe_load_lambda(file_path: str, load_func: Callable):
 
 @retry_on_lock()
 def safe_load(file_path: str, load_func: Callable, *load_func_args, **load_func_kwargs):
-    logger = BFG["logger"]
 
     if not os.path.exists(file_path):
         logger.error(f"File {file_path} does not exist")
@@ -190,7 +190,6 @@ def safe_load(file_path: str, load_func: Callable, *load_func_args, **load_func_
 def safe_ropen(
     file_path: str, read_func: Callable, *load_func_args, **load_func_kwargs
 ):
-    logger = BFG["logger"]
 
     if not os.path.exists(file_path):
         logger.error(f"File {file_path} does not exist")
@@ -206,7 +205,6 @@ def safe_ropen(
 
 @retry_on_lock()
 def safe_ropen_fd(file_path: str, read_attr: str, *load_func_args, **load_func_kwargs):
-    logger = BFG["logger"]
 
     if not os.path.exists(file_path):
         logger.error(f"File {file_path} does not exist")

@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Callable
 from io import BytesIO
 
@@ -10,6 +11,8 @@ from torch.utils.data import Dataset
 from yumbox.config import BFG
 
 from .trainer import *
+
+logger = logging.getLogger(__name__)
 
 no_op = lambda x: x
 
@@ -76,12 +79,12 @@ class ImgDataset(Dataset):
             img = Image.open(path).convert("RGB")
         # OSError: [Errno 12] Cannot allocate memory
         # except OSError as e:
-        #     BFG["logger"].error(f"Error reading corrupted image: {path}")
-        #     BFG["logger"].error(e)
+        #     logger.error(f"Error reading corrupted image: {path}")
+        #     logger.error(e)
         #     raise
         except Exception as e:
-            BFG["logger"].error(f"Error while reading image: {path}")
-            BFG["logger"].error(e)
+            logger.error(f"Error while reading image: {path}")
+            logger.error(e)
             raise
         img = self.transform(img)
         return key, img

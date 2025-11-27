@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import subprocess
@@ -16,6 +17,8 @@ from omegaconf import DictConfig, OmegaConf
 from yumbox.cache import BFG
 
 from .tools import flatten_json_columns
+
+logger = logging.getLogger(__name__)
 
 DATE_TIME_FORMAT = "%Y-%m-%dT%H-%M-%S%z"
 
@@ -80,7 +83,6 @@ def check_incomplete_mlflow_runs(mlflow_dir="mlruns"):
     Args:
         mlflow_dir (str): Base directory for MLflow runs (default: 'mlruns')
     """
-    logger = BFG["logger"]
 
     # Check MLflow runs across all experiments
     client = MlflowClient()
@@ -125,8 +127,6 @@ def get_configs(configs_dir="configs", ext=".yaml"):
 
 
 def get_committed_configs(configs_dir="configs", ext=".yaml"):
-    logger = BFG["logger"]
-
     try:
         result = subprocess.run(
             ["git", "ls-files", configs_dir], capture_output=True, text=True, check=True
@@ -154,7 +154,6 @@ def run_all_configs(
     config_mode: Literal["name", "path"] = "path",
     disable_tqm=False,
 ):
-    logger = BFG["logger"]
 
     if disable_tqm:
         tqdm_default = os.getenv("TQDM_DISABLE")
@@ -255,7 +254,6 @@ def get_mlflow_runs(
     Returns:
         List[entities.Run]: List of runs matching the criteria, sorted by start_time DESC
     """
-    logger = BFG["logger"]
 
     # try:
     client = MlflowClient()
@@ -313,7 +311,7 @@ def get_mlflow_runs(
 # Helper functions for backward compatibility and convenience
 def get_last_successful_run(experiment_name: str) -> Optional[entities.Run]:
     """Find the most recent successful parent run."""
-    logger = BFG["logger"]
+
     runs = get_mlflow_runs(experiment_name, status="success", level="parent")
     if runs:
         logger.info(
@@ -333,7 +331,6 @@ def get_last_run_failed(experiment_name: str) -> Optional[entities.Run]:
     Returns:
         Optional[entities.Run]: Most recent run if it' has failed or None
     """
-    logger = BFG["logger"]
 
     # try:
     client = MlflowClient()
@@ -408,8 +405,6 @@ def plot_metric_across_runs(
     """
 
     import matplotlib.pyplot as plt
-
-    logger = BFG["logger"]
 
     # Ensure only one of experiment_name or run_ids is provided
     if experiment_name is not None and run_ids is not None:
@@ -1094,7 +1089,6 @@ def plot_metric_across_experiments(
     import matplotlib.lines as mlines
     import matplotlib.pyplot as plt
 
-    logger = BFG["logger"]
     client = MlflowClient()
 
     if y_metric is None:

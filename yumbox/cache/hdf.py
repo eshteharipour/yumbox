@@ -2,12 +2,15 @@ import base64
 import functools
 import hashlib
 import json
+import logging
 import os
 
 import h5py
 import numpy as np
 
 from yumbox.config import BFG
+
+logger = logging.getLogger(__name__)
 
 
 def encode_key(key):
@@ -29,7 +32,6 @@ def hd5_cache(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
         cache_file = os.path.join(cache_dir, f"{func_name}.h5") if cache_dir else None
@@ -81,7 +83,6 @@ def hd5_cache_kwargs_list_hash(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         cache_dir = BFG["cache_dir"]
-        logger = BFG["logger"]
 
         func_name = func.__name__
 
