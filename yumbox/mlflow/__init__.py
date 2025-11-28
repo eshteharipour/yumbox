@@ -56,9 +56,7 @@ def log_scores_dict(
     return dict_w_name
 
 
-def log_config(
-    cfg: DictConfig, logger: None | Logger, as_artifact=True, as_params=True
-):
+def log_config(cfg: DictConfig, as_artifact=True, as_params=True):
     if as_artifact:
         temp_dir = tempfile.mkdtemp()
         config_path = os.path.join(temp_dir, "config.yaml")
@@ -74,8 +72,7 @@ def log_config(
         cfg_dict = OmegaConf.to_container(cfg)
         mlflow.log_params(cfg_dict)
 
-    if logger:
-        logger.info(cfg)
+    logger.info(cfg)
 
 
 def check_incomplete_mlflow_runs(mlflow_dir="mlruns"):
