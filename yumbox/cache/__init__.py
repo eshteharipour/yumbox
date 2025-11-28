@@ -628,7 +628,7 @@ def retry(
             Delay = backoff_factor * (2 ** retry_count). When set, overrides fixed wait.
             Class attribute takes precedence if present.
         max_wait (float, optional): Maximum wait time in seconds for exponential backoff.
-            Defaults to 60. Class attribute takes precedence if present.
+            Defaults to infinite. Class attribute takes precedence if present.
         validator (Callable, optional): Function called with (*args, **kwargs, response=response)
             to validate the response. Raises ValidationError if validation fails.
         return_exception (bool, optional): If True, returns a dict with error details instead
@@ -674,7 +674,7 @@ def retry(
             b_factor = coalesce(
                 backoff_factor, getattr(self, "backoff_factor", None), None
             )
-            m_wait = coalesce(max_wait, getattr(self, "max_wait", None), 60)
+            m_wait = coalesce(max_wait, getattr(self, "max_wait", None), float("inf"))
 
             response = {}
             for retry_count in range(-1, m_tries):
