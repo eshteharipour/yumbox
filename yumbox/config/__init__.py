@@ -55,23 +55,13 @@ class Print:
 
 class CFGClass:
     def __init__(self):
-        self.cfg: dict[
-            Literal["logger", "cache_dir"], Union[logging.Logger, str, None]
-        ] = {"logger": Print(), "cache_dir": None}
-
-    @overload
-    def __getitem__(self, index: Literal["logger"]) -> logging.Logger: ...
+        self.cfg: dict[Literal["cache_dir"], Union[str, None]] = {"cache_dir": None}
 
     @overload
     def __getitem__(self, index: Literal["cache_dir"]) -> str | None: ...
 
-    def __getitem__(
-        self, index: Literal["logger", "cache_dir"]
-    ) -> Union[logging.Logger, str, None]:
+    def __getitem__(self, index: Literal["cache_dir"]) -> Union[str, None]:
         return self.cfg[index]
-
-    @overload
-    def __setitem__(self, index: Literal["logger"], value: logging.Logger) -> None: ...
 
     @overload
     def __setitem__(
@@ -80,8 +70,8 @@ class CFGClass:
 
     def __setitem__(
         self,
-        index: Literal["logger", "cache_dir"],
-        value: Union[logging.Logger, str, None],
+        index: Literal["cache_dir"],
+        value: Union[str, None],
     ) -> None:
         if value:
             if index == "cache_dir":
