@@ -11,48 +11,6 @@ from typing import Literal, Union, overload
 logger = logging.getLogger(__name__)
 
 
-class Print:
-    @functools.wraps(logging.info)
-    def info(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-    @functools.wraps(logging.warn)
-    def warn(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-    @functools.wraps(logging.warning)
-    def warning(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-    @functools.wraps(logging.error)
-    def error(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-    @functools.wraps(logging.critical)
-    def critical(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-    @functools.wraps(logging.exception)
-    def exception(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-    @functools.wraps(logging.fatal)
-    def fatal(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-    @functools.wraps(logging.debug)
-    def debug(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-    @functools.wraps(logging.log)
-    def log(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-    @functools.wraps(logging.Logger._log)
-    def _log(self, *args, **kwargs):
-        print(*args, **kwargs)
-
-
 class CFGClass:
     def __init__(self):
         self.cfg: dict[Literal["cache_dir"], Union[str, None]] = {"cache_dir": None}

@@ -4,7 +4,6 @@ import re
 import subprocess
 import tempfile
 from datetime import datetime
-from logging import Logger
 from pathlib import Path
 from typing import Literal, Optional, Union
 
