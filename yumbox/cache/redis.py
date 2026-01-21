@@ -14,7 +14,7 @@ from redis.exceptions import ConnectionError, TimeoutError
 
 from yumbox.config import BFG
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("YumBox")
 
 P = ParamSpec("P")
 

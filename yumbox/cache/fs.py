@@ -16,7 +16,7 @@ from PIL import Image
 from yumbox.config import BFG
 from yumbox.nlp import replace_fromstart
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("YumBox")
 
 
 __all__ = [

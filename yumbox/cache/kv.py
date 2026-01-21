@@ -12,7 +12,7 @@ from lmdb import Environment
 
 from yumbox.config import BFG
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("YumBox")
 
 
 class LMDBMultiIndex:

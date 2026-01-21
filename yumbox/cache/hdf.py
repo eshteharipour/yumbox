@@ -10,7 +10,7 @@ import numpy as np
 
 from yumbox.config import BFG
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("YumBox")
 
 
 def encode_key(key):

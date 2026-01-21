@@ -17,7 +17,7 @@ from yumbox.cache import BFG
 
 from .tools import flatten_json_columns
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("YumBox")
 
 DATE_TIME_FORMAT = "%Y-%m-%dT%H-%M-%S%z"
 

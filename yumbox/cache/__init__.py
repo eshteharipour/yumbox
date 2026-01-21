@@ -22,7 +22,7 @@ from .kv import (
     lmdb_cache_kwargs_list_hash,
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("YumBox")
 
 # TODO: fix safe_save_kw keys= values=
 

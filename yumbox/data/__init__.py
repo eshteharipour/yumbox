@@ -12,7 +12,7 @@ from yumbox.config import BFG
 
 from .trainer import *
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("YumBox")
 
 no_op = lambda x: x
 

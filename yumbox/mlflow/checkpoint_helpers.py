@@ -7,7 +7,7 @@ from typing import Literal
 import mlflow
 from mlflow import MlflowClient
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("YumBox")
 
 
 def get_all_checkpoints(checkpoints_dir: str) -> set[str]:

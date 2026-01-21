@@ -8,7 +8,7 @@ from contextlib import redirect_stdout
 from datetime import datetime
 from typing import Literal, Union, overload
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("YumBox")
 
 
 class CFGClass:
