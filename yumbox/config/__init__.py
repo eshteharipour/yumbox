@@ -261,6 +261,19 @@ def redir_print(func: Callable, *args, **kwargs) -> str:
     return buffer.getvalue()
 
 
+def log_df_info(df):
+    import io
+
+    buffer = io.StringIO()
+    df.info(buf=buffer, show_counts=True)
+    logger.info("\n%s", buffer.getvalue())
+
+    # logger.info("Shape: %s", df.shape)
+    # logger.info("Columns: %s", list(df.columns))
+    # logger.info("Dtypes:\n%s", df.dtypes)
+    # logger.info("Non-null counts:\n%s", df.count())
+
+
 def execution_wrapper(func):
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
