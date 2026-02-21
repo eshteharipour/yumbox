@@ -31,9 +31,6 @@ def topk(
     # keepdims: for faiss kmeans clusters topk, pass keepdims=True
     # renamed is_faiss_kmeans_index arg to keepdims
 
-    if num_processes is None:
-        num_processes = max(1, mp.cpu_count() - 1)
-
     # sparse array length issue
     try:
         queries_len = len(queries)
