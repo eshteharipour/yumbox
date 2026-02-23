@@ -2,6 +2,8 @@
 
 import argparse
 
+from yumbox.data import fix_pandas_truncation
+
 
 def analyze_metrics(args):
     import pandas as pd
@@ -32,9 +34,7 @@ def analyze_metrics(args):
         return
 
     # Set pandas display options
-    pd.set_option("display.max_columns", None)  # Show all columns
-    pd.set_option("display.max_colwidth", None)  # Show full content of each cell
-    pd.set_option("display.width", None)  # Auto-detect terminal width
+    fix_pandas_truncation()
     pd.set_option("display.colheader_justify", "left")
     try:
         from tabulate import tabulate
@@ -211,9 +211,7 @@ def find_best_metrics_command(args):
         return
 
     # Set pandas display options for better output
-    pd.set_option("display.max_columns", None)
-    pd.set_option("display.max_colwidth", None)
-    pd.set_option("display.width", None)
+    fix_pandas_truncation()
     pd.set_option("display.colheader_justify", "left")
 
     # Print results using tabulate if available
