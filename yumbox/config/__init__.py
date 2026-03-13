@@ -254,6 +254,14 @@ def setup_logger(
     return logger
 
 
+def inspect_loggers():
+    # Get all currently active loggers
+    loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
+
+    for logger in loggers:
+        print(f"Logger: {logger.name}, Level: {logger.level}")
+
+
 def redir_print(func: Callable, *args, **kwargs) -> str:
     buffer = io.StringIO()
     with redirect_stdout(buffer):
