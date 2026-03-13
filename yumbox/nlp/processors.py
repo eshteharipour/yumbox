@@ -10,6 +10,8 @@ import unicodeblock.sequence
 from nltk.corpus import stopwords
 from tqdm import tqdm
 
+from yumbox.data import fix_pandas_truncation
+
 from .chars import Chars, Unicode, UnicodeRanges
 from .tools import MapRed
 
@@ -391,21 +393,17 @@ def analyze_head(df: pd.DataFrame, sort_key: Literal["len", "freq"]):
     df["len"] = df["word"].apply(lambda x: len(x))
     sdf = df.sort_values(by=[sort_key], ascending=False)
 
-    pd.set_option("display.max_columns", None)
-    pd.set_option("display.max_rows", None)
-    pd.set_option("display.width", None)
-    pd.set_option("display.max_colwidth", None)
-    pd.set_option("display.max_seq_item", None)
+    fix_pandas_truncation()
 
     print(sdf.head(2000))
 
 
-def run_analysis(inpath: str):
+def run_analysis(input: str):
     regex = UnicodeRanges.regex_cjk_chars()
 
     mr_word = MapRed()
     mr_char = MapRed()
-    with open(inpath, "r", encoding="utf-8") as fd:
+    with open(input, "r", encoding="utf-8") as fd:
         for l in tqdm(fd.readlines()):
             l = l.strip()
             for word in l.split(" "):
@@ -426,12 +424,12 @@ def run_analysis(inpath: str):
     analyze_chars(mr_word, mr_char)
 
 
-def run_post_process(inpath: str, outpath: str):
+def run_post_process(input: str, output: str):
     print("Reading dataset file...")
     corpus = []
     mr_word = MapRed()
     mr_char = MapRed()
-    with open(inpath, "r", encoding="utf-8") as fd:
+    with open(input, "r", encoding="utf-8") as fd:
         for l in tqdm(fd.readlines()):
             l = l.strip()
             corpus.append(l)
@@ -465,6 +463,6 @@ def run_post_process(inpath: str, outpath: str):
     corpus = re.sub("\s\s+", " ", corpus)
 
     print("Saving processed corpus...")
-    with open(outpath, "w", encoding="utf-8") as fd:
+    with open(output, "w", encoding="utf-8") as fd:
         fd.write(corpus)
     print("All done!")
