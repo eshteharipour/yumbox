@@ -1,4 +1,5 @@
 import html
+import re
 import unicodedata
 import urllib.parse
 
@@ -74,6 +75,49 @@ class MyResponse:
         self.css = lambda sel: MySelector(body.decode("utf-8")).css(sel)
         self.xpath = lambda sel: MySelector(body.decode("utf-8")).xpath(sel)
         self.status = status
+
+
+def html_to_text(t: str) -> str:
+    """Html or text to text.
+    Parse does not fail if not html."""
+
+    # if isinstance(t, int):
+    #     return t
+    # css method fails if input is all numbers with this weird error:
+    # ValueError: Cannot use css on a Selector of type 'json'
+    # if t.numeric():
+    # return t
+    if t == "null":
+        return t
+    try:
+        float(t)
+        return t
+    except ValueError:
+        pass
+
+    selector = MySelector(t)
+    parsed = selector.css("::text").getall()
+    parsed = " ".join(parsed)
+    return parsed
+
+
+def parse_html(content) -> str:
+    if content:
+        content = html_to_text(content)
+    if content:
+        if any(a in content for a in ["http://", "https://"]):
+            content = ""
+    if content:
+        www_pattern = re.compile("www\.[^\s]+\.[^\s]")
+        content = [c for c in content.split() if not www_pattern.search(content)]
+        content = " ".join(content)
+    if content:
+        content = [re.sub("/|,", " ", c) if len(c) > 25 else c for c in content.split()]
+        content = " ".join(content)
+    if content:
+        content = [c for c in content.split() if len(c) < 26]
+        content = " ".join(content)
+    return content
 
 
 def make_scrapy_log_colorful():

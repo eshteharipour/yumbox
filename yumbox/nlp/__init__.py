@@ -359,68 +359,6 @@ class SentTokenizer:
         return self.sent_tokenizer(s)
 
 
-class MySelector(Selector):
-    def get(self):
-        """
-        My serialize and return the matched nodes in a single unicode string.
-        Percent encoded content is unquoted.
-        """
-        try:
-            t = etree.tostring(
-                self.root,
-                method=self._tostring_method,
-                encoding="unicode",
-                with_tail=False,
-            )
-            t = urllib.parse.unquote(t)
-            t = html.unescape(t)
-            t = unicodedata.normalize("NFKD", t)
-            return t
-        except (AttributeError, TypeError):
-            if self.root is True:
-                return "1"
-            elif self.root is False:
-                return "0"
-            else:
-                t = six.text_type(self.root)
-                t = urllib.parse.unquote(t)
-                t = html.unescape(t)
-                t = unicodedata.normalize("NFKD", t)
-                return t
-
-
-class MyResponse:
-    def __init__(self, url, body) -> None:
-        self.url = url
-        self.body = body
-        self.css = lambda sel: MySelector(body.decode("utf-8")).css(sel)
-        self.xpath = lambda sel: MySelector(body.decode("utf-8")).xpath(sel)
-
-
-def html_to_text(t: str):
-    """Html or text to text.
-    Parse does not fail if not html."""
-
-    # if isinstance(t, int):
-    #     return t
-    # css method fails if input is all numbers with this weird error:
-    # ValueError: Cannot use css on a Selector of type 'json'
-    # if t.numeric():
-    # return t
-    if t == "null":
-        return t
-    try:
-        float(t)
-        return t
-    except ValueError:
-        pass
-
-    selector = MySelector(t)
-    parsed = selector.css("::text").getall()
-    parsed = " ".join(parsed)
-    return parsed
-
-
 class UnicodeRanges:
     """
     References:
