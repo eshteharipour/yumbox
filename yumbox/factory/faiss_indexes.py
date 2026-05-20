@@ -1,7 +1,12 @@
+from __future__ import annotations
+
+import typing
 from time import time
 
-import faiss
 import numpy as np
+
+if typing.TYPE_CHECKING:
+    import faiss
 
 
 class FaissIndexBuilder:
@@ -17,6 +22,10 @@ class FaissIndexBuilder:
         Args:
             verbose (bool): If True, print detailed information (default: False)
         """
+        import faiss
+
+        self.faiss = faiss
+
         self.verbose = verbose
 
     def normalize_vectors(self, vectors: np.ndarray) -> np.ndarray:
@@ -30,7 +39,7 @@ class FaissIndexBuilder:
             np.ndarray: Normalized vectors
         """
         normalized = vectors.copy()
-        faiss.normalize_L2(normalized)
+        self.faiss.normalize_L2(normalized)
         return normalized
 
     def build_flat_ip_index(
@@ -49,11 +58,11 @@ class FaissIndexBuilder:
             faiss.Index: Built FlatIP index
         """
         embed_size = features.shape[1]
-        index = faiss.IndexFlatIP(embed_size)
+        index = self.faiss.IndexFlatIP(embed_size)
 
         if use_gpu:
-            res = faiss.StandardGpuResources()
-            index = faiss.index_cpu_to_gpu(res, 0, index)
+            res = self.faiss.StandardGpuResources()
+            index = self.faiss.index_cpu_to_gpu(res, 0, index)
 
         start_time = time()
         index.add(features)
@@ -90,15 +99,15 @@ class FaissIndexBuilder:
             faiss.Index: Built IVF index
         """
         embed_size = features.shape[1]
-        quantizer = faiss.IndexFlatIP(embed_size)
-        index = faiss.IndexIVFFlat(
-            quantizer, embed_size, nlist, faiss.METRIC_INNER_PRODUCT
+        quantizer = self.faiss.IndexFlatIP(embed_size)
+        index = self.faiss.IndexIVFFlat(
+            quantizer, embed_size, nlist, self.faiss.METRIC_INNER_PRODUCT
         )
         index.nprobe = nprobe
 
         if use_gpu:
-            res = faiss.StandardGpuResources()
-            index = faiss.index_cpu_to_gpu(res, 0, index)
+            res = self.faiss.StandardGpuResources()
+            index = self.faiss.index_cpu_to_gpu(res, 0, index)
 
         start_time = time()
         index.train(features)
@@ -137,12 +146,12 @@ class FaissIndexBuilder:
             faiss.Index: Built HNSW index
         """
         embed_size = features.shape[1]
-        index = faiss.IndexHNSWFlat(embed_size, M, faiss.METRIC_INNER_PRODUCT)
+        index = self.faiss.IndexHNSWFlat(embed_size, M, self.faiss.METRIC_INNER_PRODUCT)
         index.hnsw.efConstruction = efConstruction
 
         if use_gpu:
-            res = faiss.StandardGpuResources()
-            index = faiss.index_cpu_to_gpu(res, 0, index)
+            res = self.faiss.StandardGpuResources()
+            index = self.faiss.index_cpu_to_gpu(res, 0, index)
 
         start_time = time()
         index.add(features)
@@ -180,11 +189,13 @@ class FaissIndexBuilder:
             faiss.Index: Built PQ index
         """
         embed_size = features.shape[1]
-        index = faiss.IndexPQ(embed_size, m, nbits, faiss.METRIC_INNER_PRODUCT)
+        index = self.faiss.IndexPQ(
+            embed_size, m, nbits, self.faiss.METRIC_INNER_PRODUCT
+        )
 
         if use_gpu:
-            res = faiss.StandardGpuResources()
-            index = faiss.index_cpu_to_gpu(res, 0, index)
+            res = self.faiss.StandardGpuResources()
+            index = self.faiss.index_cpu_to_gpu(res, 0, index)
 
         start_time = time()
         index.train(features)
@@ -227,15 +238,15 @@ class FaissIndexBuilder:
             faiss.Index: Built IVFPQ index
         """
         embed_size = features.shape[1]
-        quantizer = faiss.IndexFlatIP(embed_size)
-        index = faiss.IndexIVFPQ(
-            quantizer, embed_size, nlist, m, nbits, faiss.METRIC_INNER_PRODUCT
+        quantizer = self.faiss.IndexFlatIP(embed_size)
+        index = self.faiss.IndexIVFPQ(
+            quantizer, embed_size, nlist, m, nbits, self.faiss.METRIC_INNER_PRODUCT
         )
         index.nprobe = nprobe
 
         if use_gpu:
-            res = faiss.StandardGpuResources()
-            index = faiss.index_cpu_to_gpu(res, 0, index)
+            res = self.faiss.StandardGpuResources()
+            index = self.faiss.index_cpu_to_gpu(res, 0, index)
 
         start_time = time()
         index.train(features)
