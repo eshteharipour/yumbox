@@ -1,0 +1,50 @@
+site_url: https://example.com/
+site_dir: build/site
+site_name: Yumbox Documentation
+site_description: Fast prototyping utilities for ML projects
+site_author: Shayan Eshteharipour
+
+
+repo_name: eshteharipour/yumbox
+repo_url: https://github.com/eshteharipour/yumbox
+
+strict: true
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - search.highlight
+
+nav:
+  - Home: index.md
+  - Cache: cache.md
+  - Config: config.md
+  - Data: data.md
+  - Factory: factory.md
+  - Metrics: metrics.md
+  - MLflow: mlflow.md
+  - NLP: nlp.md
+  - Parse: parse.md
+  - Scraper: scraper.md
+  - Scripts: scripts.md
+  - Vectors: vectors.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - attr_list
+  - md_in_html
