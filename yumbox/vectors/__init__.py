@@ -46,9 +46,21 @@ def topk(
 
     nn_d = []
     nn = []
+
+    # TODO: Fixed batching logic
+    # if search_size:
+    #     batch_size = search_size
+    # else:
+    #     # Base batch size on CPU cores for even work distribution
+    #     batch_size = max(1, queries_len // (num_processes * 2))
+    #     # Set reasonable bounds
+    #     batch_size = max(10, min(batch_size, 512))
+
     batch_size = 512
     if search_size:
         batch_size = search_size // k
+
+    print(f"Batch size for FAISS: {batch_size}")
 
     # Multiprocess large requests
     if queries_len > batch_size:
@@ -387,6 +399,7 @@ def reconstruct_original_index(
     fill_value: np.ndarray | list | None = None,
 ):
     """Reconstruct original array by inserting fill values at missing indices.
+    This function copies input, safe to reuse original `target` after call.
 
     Args:
         target: The array/list to insert values into.
