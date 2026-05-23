@@ -1,7 +1,21 @@
+<div align="center">
+
 # Yumbox 🍱
 
-> **Ya**dgiri **M**achine Tool**box** — A very yummy project!
-> (Yadgiri is Persian for "learning".)
+**A reusable machine learning toolbox for fast prototyping, experiment tracking, and vector search.**
+
+[![PyPI Version](https://img.shields.io/pypi/v/yumbox.svg)](https://pypi.org/project/yumbox/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/yumbox.svg)](https://pypi.org/project/yumbox/)
+[![Documentation Status](https://readthedocs.org/projects/yumbox/badge/?version=latest)](https://yumbox.readthedocs.io/en/latest/?badge=latest)
+
+> **Ya**dgiri **M**achine Tool**box** — A very yummy project!<br>
+> *(Yadgiri is Persian for "learning".)*
+
+📚 **[Read the Full Documentation here!](https://yumbox.readthedocs.io/)**
+
+</div>
+
+---
 
 **What is Yumbox?**
 
@@ -13,22 +27,21 @@ I found myself reusing the same classes and functions in my projects over the ye
 
 **How Yumbox came to be!**
 
-I gradually started refactoring the classes and functions from the projects I was working on in the industry and the university and I added them to Yumbox. I still continue to do so, when I find a highly valuable functionality that can be reused and shared with other projects. Since the things covered in this project have vastly different scopes, I follow a dynamic import paradigm so you only have to install the dependencies required for the functionality neede. I will later make these dynamic imports, lazy imports, just as popular libraries like HuggingFace's `transformers` do. 
+I gradually started refactoring the classes and functions from the projects I was working on in the industry and the university and I added them to Yumbox. I still continue to do so, when I find a highly valuable functionality that can be reused and shared with other projects. Since the things covered in this project have vastly different scopes, I follow a dynamic import paradigm so you only have to install the dependencies required for the functionality needed. I will later make these dynamic imports lazy imports, just as popular libraries like HuggingFace's `transformers` do. 
 
-
-You can install this project using
+You can install this project using:
 ```bash
 pip install yumbox
 pip install yumbox[faiss]  # Installs FAISS dependency
 ```
 
-> ⚠️ **Heads up**: Yumbox is currently in pre-release stage. I heavily use this repo in my projects and I try to not make breaking changes, but still, you should expect things to break, APIs to change, and documentation to play catch-up. Not all functionalities are fully tested yet.
+> ⚠️ **Heads up**: Yumbox is currently in the pre-release stage. I heavily use this repo in my projects and I try to not make breaking changes, but still, you should expect things to break, APIs to change, and documentation to play catch-up. Not all functionalities are fully tested yet since I try to cover all use-cases.
 
 ---
 
 ## 🗂️ Project Structure
 
-```
+```text
 yumbox/
 ├── cache/      # 🔄 Caching decorators & storage backends (pickle, LMDB, Redis, FAISS)
 ├── config/     # ⚙️ Global config (BFG) + production-ready logger setup
@@ -145,28 +158,28 @@ metrics-cli best-metrics \
 - **Backends**: pickle, NumPy `.npz`, HDF5, LMDB, Redis, FAISS indices, safetensors
 - **Smart features**: kwargs-based keys, hash-based keys, lazy loading, offset tracking for pagination
 
-👉 [Full cache documentation](docs/cache.md)
+👉 [Full cache documentation](https://yumbox.readthedocs.io/en/latest/cache/)
 
 ### `config/` — Logging & Configuration
 - **`BFG`**: Global config store (your own configs + `cache_dir` for enabling/disabling cache functionalities of yumbox)
 - **`setup_logger()`**: Color-coded console output, file logging, library capture/suppression, print redirection
 - **Helpers**: `execution_wrapper` (auto-timing + error logging), `main_run`, `log_df_info`
 
-👉 [Full config documentation](docs/config.md)
+👉 [Full config documentation](https://yumbox.readthedocs.io/en/latest/config/)
 
 ### `data/` — Datasets & Training Utilities
 - **FlexibleDataset**: Mode-aware (`text`/`image`/`text_image`) datasets with transform pipelines
 - **Specialized datasets**: `WebImgDataset`, `TextDataset`, `TFDocumentDataset`, `ZeroshotDataset`
 - **Samplers**: `ContrastiveSampler`, `TripletSampler`, `SiameseSampler`, `ClusterSampler` for advanced training strategies
 
-👉 [Full data documentation](docs/data.md)
+👉 [Full data documentation](https://yumbox.readthedocs.io/en/latest/data/)
 
 ### `factory/` — FAISS & Vector Processing
 - **Index builders**: Flat, IVF, HNSW, PQ, IVFPQ with GPU support
 - **Utilities**: `pca_faiss`, `kmeans_faiss`, `self_similarity`
 - **`FaissIndexBuilder`**: Unified API for production-ready index construction
 
-👉 [Full factory documentation](docs/factory.md)
+👉 [Full factory documentation](https://yumbox.readthedocs.io/en/latest/factory/)
 
 ### `metrics/` — Evaluation Made Simple
 - **Classification**: `classification_scores`, `extended_classification_scores` with FPR/FNR
@@ -174,7 +187,7 @@ metrics-cli best-metrics \
 - **Visualization**: PR/ROC curves auto-logged to MLflow
 - **Utilities**: `AverageMeter` for training loops, `cosine_sim` for tensor similarity
 
-👉 [Full metrics documentation](docs/metrics.md)
+👉 [Full metrics documentation](https://yumbox.readthedocs.io/en/latest/metrics/)
 
 ### `mlflow/` — Experiment Tracking & Checkpoint Management
 - **Logging**: `log_config`, `log_scores_dict`, recursive OmegaConf param logging
@@ -182,32 +195,32 @@ metrics-cli best-metrics \
 - **Checkpoint helpers**: Intelligent cleanup based on metric performance (`manage-checkpoints` CLI)
 - **Export**: `export_mlflow_data_with_flattening` for CSV analysis
 
-👉 [Full mlflow documentation](docs/mlflow.md)
+👉 [Full mlflow documentation](https://yumbox.readthedocs.io/en/latest/mlflow/)
 
 ### `nlp/` — Multilingual Text Preprocessing
 - **`Preprocessor`**: Flag-driven pipeline for English/Persian text cleaning
 - **Unicode utilities**: Character normalization, accent stripping, CJK removal, range-based filtering
 - **Analysis**: `MapRed` for frequency counting, `defaultname` for alias resolution/entity clustering
 
-👉 [Full nlp documentation](docs/nlp.md)
+👉 [Full nlp documentation](https://yumbox.readthedocs.io/en/latest/nlp/)
 
 ### `parse/` — Dependency Analysis
 - **`analyze_dependencies()`**: Runtime import tracing vs. installed/declared packages
 - **Use cases**: Generate minimal `requirements.txt`, audit Docker images, CI/CD dependency checks
 
-👉 [Full parse documentation](docs/parse.md)
+👉 [Full parse documentation](https://yumbox.readthedocs.io/en/latest/parse/)
 
 ### `scraper/` — Web Scraping Utilities
 - **HTML parsing**: `parse_html`, `html_to_text`, enhanced `MySelector` with auto-decoding
 - **`ImageDownloader`**: Parallel downloading with PIL corruption checks, custom DNS resolution, quality filtering
 
-👉 [Full scraper documentation](docs/scraper.md)
+👉 [Full scraper documentation](https://yumbox.readthedocs.io/en/latest/scraper/)
 
 ### `scripts/` — CLI Tools
 - **`metrics-cli`**: Subcommands for experiment analysis, comparison, checkpoint management, best-run discovery
 - **Help system**: `metrics-cli help patterns` for usage examples, troubleshooting guides
 
-👉 [Full scripts documentation](docs/scripts.md)
+👉 [Full scripts documentation](https://yumbox.readthedocs.io/en/latest/scripts/)
 
 ### `vectors/` — Vector Operations & Feature Fusion
 - **Search**: `topk()` with parallel FAISS querying, `nested_topk()` for hierarchical retrieval
@@ -215,7 +228,7 @@ metrics-cli best-metrics \
 - **Feature fusion**: `cat_feats`, `mult_feats`, `sum_feats`, `diff_feats` with missing-value handling
 - **Utilities**: `reconstruct_original_index()` for restoring filtered arrays
 
-👉 [Full vectors documentation](docs/vectors.md)
+👉 [Full vectors documentation](https://yumbox.readthedocs.io/en/latest/vectors/)
 
 ---
 
@@ -387,7 +400,7 @@ mypy yumbox/   # Type check
 
 ## 📄 License
 
-[MIT](LICENSE) — do whatever you want, just don't anyone if it breaks 😉
+[MIT](LICENSE) — do whatever you want, just don't blame anyone if it breaks! 😉
 
 ---
 

@@ -1,7 +1,7 @@
 [project]
 name = "yumbox"
-dynamic = ["version"] 
-description = "Tools and utilities for fast prototyping of machine learning ideas!"
+dynamic = ["version"]
+description = "A reusable machine learning toolbox for fast prototyping, experiment tracking, and vector search."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
@@ -22,10 +22,59 @@ dependencies = [
     "h5py",
     "redis>=4.0.0",
 ]
+keywords = [
+    "machine-learning",
+    "ml-tools",
+    "prototyping",
+    "caching",
+    "faiss",
+    "mlflow",
+    "entity-resolution",
+    "experiment-tracking",
+    "dependency-analysis",
+]
+classifiers = [
+    # Development status
+    "Development Status :: 4 - Beta",
+
+    # Python version support
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+
+    # License
+    "License :: OSI Approved :: MIT License",
+
+    # Platform support
+    "Operating System :: OS Independent",
+
+    # Intended audience
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+
+    # Topic categorization
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Text Processing :: Linguistic",
+
+    # Development tools
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/eshteharipour/yumbox"
+Documentation = "https://yumbox.readthedocs.io/"
+Repository = "https://github.com/eshteharipour/yumbox"
+Issues = "https://github.com/eshteharipour/yumbox/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "flake8>=4.0", "black>=23.0", "mypy>=0.990"]
 faiss = ["faiss-cpu"]
+faiss-gpu = ["faiss-gpu>=1.7"]
+mlflow = ["mlflow>=3"]
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]

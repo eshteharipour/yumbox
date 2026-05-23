@@ -1,9 +1,8 @@
-site_url: https://example.com/
+site_url: https://yumbox.readthedocs.io/
 site_dir: build/site
 site_name: Yumbox Documentation
 site_description: Fast prototyping utilities for ML projects
 site_author: Shayan Eshteharipour
-
 
 repo_name: eshteharipour/yumbox
 repo_url: https://github.com/eshteharipour/yumbox
@@ -14,10 +13,14 @@ theme:
   name: material
   palette:
     - scheme: default
+      primary: orange
+      accent: deep orange
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
     - scheme: slate
+      primary: orange
+      accent: deep orange
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode
