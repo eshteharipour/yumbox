@@ -19,7 +19,7 @@ def init_nltk():
     nltk.download("punkt_tab")
 
 
-def get_wordnet_pos(self, word):
+def get_wordnet_pos(word):
     from nltk.corpus import wordnet
 
     tag = nltk.pos_tag([word])[0][1][0].upper()
