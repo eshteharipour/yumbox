@@ -1,5 +1,8 @@
 import json
+import os
+from pathlib import Path
 
+import mlflow
 import pandas as pd
 
 
@@ -57,3 +60,20 @@ def flatten_json_columns(df: pd.DataFrame) -> pd.DataFrame:
                         df_flattened = pd.concat([df_flattened, json_df], axis=1)
 
     return df_flattened
+
+
+def set_tracking_uri(path: str):
+    # If path is absolute
+    if path.startswith("/"):
+        mlflow.set_tracking_uri(f"file:{path}")
+    # Otherwise get parent dir of entrypoint script
+    else:
+        # Resolves to interpreter path on console:
+        # main_file = Path(sys.argv[0]).parent.resolve()
+
+        main_file = Path(os.getcwd()).resolve()
+        mlflow_path = os.path.join(main_file, path)
+        os.makedirs(mlflow_path, exist_ok=True)
+        mlflow.set_tracking_uri(f"file:{mlflow_path}")
+
+    return mlflow.get_tracking_uri()

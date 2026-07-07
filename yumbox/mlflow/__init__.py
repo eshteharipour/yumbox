@@ -15,7 +15,7 @@ from omegaconf import DictConfig, OmegaConf
 
 from yumbox.cache import BFG
 
-from .tools import flatten_json_columns
+from .tools import flatten_json_columns, set_tracking_uri
 
 logger = logging.getLogger("YumBox")
 
@@ -358,23 +358,6 @@ def get_last_run_failed(experiment_name: str) -> Optional[entities.Run]:
     #         f"Error retrieving last run for '{experiment_name}': {str(e)}"
     #     )
     #     return None
-
-
-def set_tracking_uri(path: str):
-    # If path is absolute
-    if path.startswith("/"):
-        mlflow.set_tracking_uri(f"file:{path}")
-    # Otherwise get parent dir of entrypoint script
-    else:
-        # Resolves to interpreter path on console:
-        # main_file = Path(sys.argv[0]).parent.resolve()
-
-        main_file = Path(os.getcwd()).resolve()
-        mlflow_path = os.path.join(main_file, path)
-        os.makedirs(mlflow_path, exist_ok=True)
-        mlflow.set_tracking_uri(f"file:{mlflow_path}")
-
-    return mlflow.get_tracking_uri()
 
 
 def plot_metric_across_runs(
