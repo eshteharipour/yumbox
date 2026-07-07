@@ -39,6 +39,10 @@ _COMPARISON_METRICS: tuple[str, ...] = (
     "short_pct",
     "medium_pct",
     "long_pct",
+    "cov_score",
+    "cov_surface_pct",
+    "cov_trans_pct",
+    "cov_translit_pct",
 )
 
 _METRIC_LABELS: dict[str, str] = {
@@ -66,6 +70,10 @@ _METRIC_LABELS: dict[str, str] = {
     "short_pct": "short length %",
     "medium_pct": "medium length %",
     "long_pct": "long length %",
+    "cov_score": "column coverage score (higher=better)",
+    "cov_surface_pct": "source surface token %",
+    "cov_trans_pct": "translation token %",
+    "cov_translit_pct": "transliteration token %",
 }
 
 
@@ -233,6 +241,9 @@ def format_dataset_build_comparison_table(
             "  duplicate row % = identical (tokens + labels) | diversity score =",
             "  diversity_tune --objective absolute (lower = more diverse)",
             "  diversity score vs valid = diversity_tune --objective reference",
+            "  column coverage score = mean of surface + translation + transliteration",
+            "  token % = column vocab from source rows kept after subsample",
+            "  (compose-only reference; typo-safe, not literal final-token match)",
         ]
     )
     return "\n".join(lines)
