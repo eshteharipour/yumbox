@@ -16,6 +16,8 @@ DEFAULT_DATASET_EXPERIMENT = "ner_dataset_build"
 
 _COMPARISON_METRICS: tuple[str, ...] = (
     "rows",
+    "div_score",
+    "div_ref_score",
     "dup_surface_pct",
     "dup_row_pct",
     "tok_gini",
@@ -25,9 +27,15 @@ _COMPARISON_METRICS: tuple[str, ...] = (
     "fa_token_pct",
     "mfr_gini",
     "mfr_top10_pct",
+    "mfr_fa_pct",
+    "mfr_en_pct",
     "cat_gini",
     "cat_top10_pct",
+    "cat_fa_pct",
+    "cat_en_pct",
     "pn_gini",
+    "pn_fa_pct",
+    "pn_en_pct",
     "short_pct",
     "medium_pct",
     "long_pct",
@@ -35,21 +43,29 @@ _COMPARISON_METRICS: tuple[str, ...] = (
 
 _METRIC_LABELS: dict[str, str] = {
     "rows": "rows",
-    "dup_surface_pct": "surf%",
-    "dup_row_pct": "row%",
-    "tok_gini": "tok_G",
-    "tok_entropy": "tok_H",
-    "tok_top10_pct": "t10%",
-    "fa_title_pct": "fa_t%",
-    "fa_token_pct": "fa_k%",
-    "mfr_gini": "mfr_G",
-    "mfr_top10_pct": "mfr_t10",
-    "cat_gini": "cat_G",
-    "cat_top10_pct": "cat_t10",
-    "pn_gini": "pn_G",
-    "short_pct": "short%",
-    "medium_pct": "med%",
-    "long_pct": "long%",
+    "div_score": "diversity score (abs, lower=better)",
+    "div_ref_score": "diversity score vs valid (lower=better)",
+    "dup_surface_pct": "duplicate surface %",
+    "dup_row_pct": "duplicate row %",
+    "tok_gini": "token Gini",
+    "tok_entropy": "token entropy",
+    "tok_top10_pct": "token top-10 %",
+    "fa_title_pct": "Persian title %",
+    "fa_token_pct": "Persian token %",
+    "mfr_gini": "manufacturer Gini",
+    "mfr_top10_pct": "manufacturer top-10 %",
+    "mfr_fa_pct": "manufacturer Farsi %",
+    "mfr_en_pct": "manufacturer English %",
+    "cat_gini": "category Gini",
+    "cat_top10_pct": "category top-10 %",
+    "cat_fa_pct": "category Farsi %",
+    "cat_en_pct": "category English %",
+    "pn_gini": "part-number Gini",
+    "pn_fa_pct": "part-number Farsi %",
+    "pn_en_pct": "part-number English %",
+    "short_pct": "short length %",
+    "medium_pct": "medium length %",
+    "long_pct": "long length %",
 }
 
 
@@ -162,40 +178,62 @@ def fetch_recent_dataset_build_runs(
     return runs[:n]
 
 
+def _run_column_label(run: entities.Run, *, highlight_run_id: Optional[str]) -> str:
+    marker = "→" if highlight_run_id and run.info.run_id == highlight_run_id else ""
+    return f"{marker}{_run_label(run)}"
+
+
 def format_dataset_build_comparison_table(
     runs: Sequence[entities.Run],
     *,
     metrics: Sequence[str] = _COMPARISON_METRICS,
     highlight_run_id: Optional[str] = None,
 ) -> str:
-    """Render a fixed-width comparison table for recent dataset builds."""
+    """Render a pivoted fixed-width table: metrics as rows, runs as columns."""
     if not runs:
         return "No previous dataset builds found in MLflow."
 
+    run_metrics = [_metrics_from_run(run) for run in runs]
     metric_keys = [m for m in metrics if m in _METRIC_LABELS]
-    label_w = max(len(_run_label(run)) for run in runs)
-    label_w = max(label_w, len("run"))
+    # Omit reference-only score when no run logged it.
+    if not any("div_ref_score" in metrics for metrics in run_metrics):
+        metric_keys = [m for m in metric_keys if m != "div_ref_score"]
 
-    header = f"{'run':<{label_w}}"
+    run_labels = [
+        _run_column_label(run, highlight_run_id=highlight_run_id) for run in runs
+    ]
+    metric_w = max(len("metric"), *(len(_METRIC_LABELS[k]) for k in metric_keys))
+    col_w = max(
+        10,
+        *(len(label) for label in run_labels),
+        *(
+            len(_format_metric(run_metrics[i].get(key)))
+            for i in range(len(runs))
+            for key in metric_keys
+        ),
+    )
+
+    header = f"{'metric':<{metric_w}}"
+    for label in run_labels:
+        header += f"  {label:>{col_w}}"
+    sep = "-" * len(header)
+    lines = [header, sep]
+
     for key in metric_keys:
-        header += f"  {_METRIC_LABELS[key]:>8}"
-    lines = [header, "-" * len(header)]
-
-    for run in runs:
-        row_metrics = _metrics_from_run(run)
-        marker = (
-            "→" if highlight_run_id and run.info.run_id == highlight_run_id else " "
-        )
-        label = _run_label(run)
-        row = f"{marker}{label:<{label_w - 1}}"
-        for key in metric_keys:
-            row += f"  {_format_metric(row_metrics.get(key)):>8}"
+        row = f"{_METRIC_LABELS[key]:<{metric_w}}"
+        for metrics_for_run in run_metrics:
+            row += f"  {_format_metric(metrics_for_run.get(key)):>{col_w}}"
         lines.append(row)
 
-    lines.append(
-        "Legend — surf%: same tokens (labels may differ) | row%: exact (tokens+labels) "
-        "dup | tok_G/H/t10: token Gini/entropy/top-10 | fa_*: Persian title/token % | "
-        "mfr/cat/pn_G: span Gini | short/med/long: length mix"
+    lines.extend(
+        [
+            "",
+            "Notes:",
+            "  → marks the current run | duplicate surface % = same token string",
+            "  duplicate row % = identical (tokens + labels) | diversity score =",
+            "  diversity_tune --objective absolute (lower = more diverse)",
+            "  diversity score vs valid = diversity_tune --objective reference",
+        ]
     )
     return "\n".join(lines)
 
