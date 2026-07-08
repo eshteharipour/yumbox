@@ -184,6 +184,8 @@ class ImageDownloader:
             domain: Domain to resolve locally (e.g., 'mydomain.com'). If None, no custom resolution
             resolve_to: IP address to resolve the domain to (default: 127.0.0.1)
         """
+        # TODO: add retry, handle 429 across processes/threads.
+
         if base_dir is None:
             temp_base = Path(tempfile.gettempdir())
             self.base_dir = temp_base / "image_downloader"
