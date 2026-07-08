@@ -61,13 +61,23 @@ extra = ["torch"] # dynamic import in yumbox __init__
 faiss = ["faiss-cpu<1.14"]
 faiss-gpu = ["faiss-gpu>=1.7"]
 cache = [
-    "faiss-cpu<1.14",
-    "h5py",           # module import in hdf
+    # "faiss-cpu<1.14", # dynamic import
+    # "h5py",           # module import in hdf
     "lmdb",
     "msgpack",
     "numpy",
-    "pillow",         # dynamic import in fs
-    "redis>=4.0.0",   # module import in redis
+    # "pillow",         # dynamic import in fs
+    # "redis>=4.0.0",   # module import in redis
+    "safetensors",
+]
+cache-full = [
+    "faiss-cpu<1.14",
+    "h5py",
+    "lmdb",
+    "msgpack",
+    "numpy",
+    "pillow",
+    "redis>=4.0.0",
     "safetensors",
 ]
 # config = []
