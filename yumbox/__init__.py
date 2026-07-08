@@ -1,7 +1,5 @@
 from typing import Literal
 
-from . import cache, config, data, factory, metrics, nlp, vectors
-
 RNG = {}
 
 

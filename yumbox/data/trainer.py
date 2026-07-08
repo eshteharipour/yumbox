@@ -7,7 +7,6 @@ import albumentations as A
 import numpy as np
 import torch
 import torchvision.transforms.functional as F
-from PIL import Image
 from torch.utils.data import DataLoader, Dataset, Sampler, Subset
 from torchvision.transforms.transforms import Compose
 
@@ -54,6 +53,8 @@ class FlexibleDataset(Dataset):
         return text
 
     def get_image(self, idx: int) -> np.ndarray | torch.Tensor:
+        from PIL import Image
+
         image_path = self.images[idx]
         image = Image.open(image_path).convert("RGB")
         if self.img_callables is not None:
@@ -208,6 +209,8 @@ class FlexiblePairDataset(FlexibleDataset):
         Returns:
             Transformed image.
         """
+        from PIL import Image
+
         image_path = image_list[idx]
         image = Image.open(image_path).convert("RGB")
         if self.img_callables is not None:
@@ -369,6 +372,8 @@ class FlexibleTripletDataset(FlexibleDataset):
         Returns:
             Transformed image.
         """
+        from PIL import Image
+
         image_path = image_list[idx]
         image = Image.open(image_path).convert("RGB")
         if self.img_callables is not None:

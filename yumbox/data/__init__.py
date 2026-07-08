@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import requests
 import torch
-from PIL import Image
 from torch.utils.data import Dataset
 
 from yumbox.config import BFG
@@ -91,6 +90,8 @@ class PairDataset(Dataset):
 
     def _process_image(self, path_or_url: str):
         """Combined ImgDataset & WebImgDataset logic toggled by image_storage"""
+        from PIL import Image
+
         if pd.isna(path_or_url):
             return None
 
@@ -164,6 +165,8 @@ class ImgDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, index):
+        from PIL import Image
+
         key, path = self.data[index]
         try:
             img = Image.open(path).convert("RGB")

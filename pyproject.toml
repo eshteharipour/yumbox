@@ -6,22 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
 authors = [{ name = "Shayan", email = "shayaneshteharipour@gmail.com" }]
-dependencies = [
-    "numpy",
-    "torch",
-    "hazm>=0.9.3",
-    "nltk>=3.8",
-    "unicodeblock",
-    "lxml",
-    "parsel",
-    "tqdm",
-    "pillow",
-    "safetensors",
-    "lmdb",
-    "msgpack",
-    "h5py",
-    "redis>=4.0.0",
-]
+dependencies = ["numpy", "pandas"]
 keywords = [
     "machine-learning",
     "ml-tools",
@@ -72,9 +57,57 @@ Issues = "https://github.com/eshteharipour/yumbox/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "flake8>=4.0", "black>=23.0", "mypy>=0.990"]
-faiss = ["faiss-cpu"]
+extra = ["torch"] # dynamic import in yumbox __init__
+faiss = ["faiss-cpu<1.14"]
 faiss-gpu = ["faiss-gpu>=1.7"]
-mlflow = ["mlflow>=3"]
+cache = [
+    "faiss-cpu<1.14",
+    "h5py",           # module import in hdf
+    "lmdb",
+    "msgpack",
+    "numpy",
+    "pillow",         # dynamic import in fs
+    "redis>=4.0.0",   # module import in redis
+    "safetensors",
+]
+# config = []
+data = [
+    "albumentations",
+    "arabic-reshaper",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "pillow",          # dynamic import 
+    "python-bidi",
+    "requests",
+    "torch",
+    "torchvision",
+]
+factory = ["faiss-cpu<1.14", "numpy", "scikit-learn"]
+metrics = [
+    "matplotlib",
+    "mlflow>=3",
+    "numpy",
+    "plotly",
+    "scikit-learn",
+    "torch",
+]
+mlflow = ["matplotlib", "mlflow>=3", "numpy", "omegaconf", "pandas", "plotly"]
+nlp = ["hazm>=0.9.3", "nltk>=3.8", "pandas", "unicodeblock"]
+# parse = [
+#     "tomli"  # 3rd party fallback for stdlib `tomllib` in Python < 3.11
+# ]
+scraper = [
+    "colorlog",
+    "lxml",
+    "parsel",
+    "pillow",   # dynamic import 
+    "pycurl",
+    "scrapy",
+    "six",
+]
+scripts = ["pandas", "tabulate"]
+vectors = ["numpy", "pandas", "torch"]
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]

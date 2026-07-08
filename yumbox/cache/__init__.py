@@ -13,7 +13,6 @@ from safetensors.numpy import load_file, save_file
 from yumbox.config import BFG
 
 from .fs import *
-from .hdf import hd5_cache, hd5_cache_kwargs_list_hash
 from .kv import (
     LMDB,
     LMDBMultiIndex,

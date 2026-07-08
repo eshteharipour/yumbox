@@ -11,7 +11,6 @@ import time
 from collections.abc import Callable
 
 import numpy as np
-from PIL import Image
 
 from yumbox.config import BFG
 from yumbox.nlp import replace_fromstart
@@ -295,6 +294,8 @@ class FSImage:
         return random.Random(seed)
 
     def _read_img(self, path):
+        from PIL import Image
+
         return np.array(Image.open(path).convert("RGB"))
 
     def get_random(self, seed=None):

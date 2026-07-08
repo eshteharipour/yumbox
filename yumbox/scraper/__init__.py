@@ -10,7 +10,6 @@ import pycurl
 import six
 from lxml import etree
 from parsel import Selector
-from PIL import Image
 
 logger = logging.getLogger("YumBox")
 
@@ -233,6 +232,8 @@ class ImageDownloader:
         Returns:
             True if corrupted/invalid/too small, False if valid
         """
+        from PIL import Image
+
         try:
             # Check if file is empty
             if filepath.stat().st_size == 0:
