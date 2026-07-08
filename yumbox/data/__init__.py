@@ -144,43 +144,6 @@ class PairDataset(Dataset):
         return key, out1, out2
 
 
-class WebImgDataset(Dataset):
-    def __init__(
-        self,
-        df: pd.DataFrame,
-        path_col: str,
-        hash_col: str,
-        features: dict[str, np.ndarray],
-        embed_dim: int,
-        transform: Callable | None = no_op,
-    ):
-        self.transform = no_op if transform is None else transform
-
-        df_wimages = df[df[hash_col].astype(bool) & df[hash_col].notna()]
-        hash2path = {r[hash_col]: r[path_col] for _, r in df_wimages.iterrows()}
-        missing_keys = set(hash2path.keys()).difference(set(features.keys()))
-        self.data = [(k, hash2path[k]) for k in missing_keys]
-
-        self.headers = {"User-Agent": "Mozilla/5.0"}
-        self.embed_dim = embed_dim
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, index):
-        key, url = self.data[index]
-        try:
-            response = requests.get(url, stream=False, timeout=10, headers=self.headers)
-            response.raise_for_status()
-
-            img = Image.open(BytesIO(response.content)).convert("RGB")
-            img = self.transform(img)
-            return key, img
-        except Exception as e:
-            print(f"WARNING: download/read failed with exception: {e}")
-            return key, torch.empty(0, self.embed_dim, dtype=torch.float32)
-
-
 class ImgDataset(Dataset):
     def __init__(
         self,
